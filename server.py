@@ -2,17 +2,10 @@
     analysis to be executed over the Flask channel and deployed on
     localhost:5000.
 '''
-
-# Import Flask, render_template, request from the flask pramework package
 from flask import Flask, render_template, request
-
-# Import the sentiment_analyzer function from the package created
 from EmotionDetection.emotion_detection import emotion_detector
 
-#Initiate the flask app
 app = Flask("Emotion Detector")
-
-
 @app.route("/emotionDetector")
 def sent_analyzer():
     ''' This code receives the text from the HTML interface and 
@@ -20,22 +13,31 @@ def sent_analyzer():
         function. The output returned shows the label and its confidence 
         score for the provided text.
     '''
-    # Retrieve the text to analyze from the request arguments
     text_to_analyze = request.args.get('textToAnalyze')
-
-    # Pass the text to the sentiment_analyzer function and store the response
     response = emotion_detector(text_to_analyze)
+    
+    output = (
+        "For the given statement, the system response is "
+        f"anger: {response['anger']}, "
+        f"disgust: {response['disgust']}, "
+        f"fear: {response['fear']}, "
+        f"joy: {response['joy']} and "
+        f"sadness: {response['sadness']}. "
+        f"The dominant emotion is {response['dominant_emotion']}."
+    )
+    
+    return output
 
-    # Extract the label and score from the response
-    label = response['label']
-    score = response['score']
+    ## Extract the label and score from the response
+    #label = response['label']
+    #score = response['score']
 
-    # Check if the label is None, indicating an error or invalid input
-    if label is None:
-        return "Invalid input! Try again."
-    else:
-        # Return a formatted string with the sentiment label and score
-        return "The given text has been identified as {} with a score of {}.".format(label.split('_')[1], score)
+    ## Check if the label is None, indicating an error or invalid input
+    #if label is None:
+    #    return "Invalid input! Try again."
+    #else:
+    #    # Return a formatted string with the sentiment label and score
+    #    return "The given text has been identified as {} with a score of {}.".format(label.split('_')[1], score)
 
 @app.route("/")
 def render_index_page():
